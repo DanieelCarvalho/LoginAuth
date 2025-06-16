@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123 # Senha para o usuário root (geralmente só para admin)
+      MYSQL_DATABASE: api
+      MYSQL_USER: apiuser # Novo usuário para a aplicação
+      MYSQL_PASSWORD: apipassword # Senha para o novo usuário
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - api-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    image: daniellcarvalho/login-auth:1.0
+    container_name: login-auth
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/api
+      - SPRING_DATASOURCE_USERNAME=apiuser # Use o novo usuário
+      - SPRING_DATASOURCE_PASSWORD=apipassword # Use a nova senha
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - API_SECRET=segredo123
+
+    ports:
+      - "8080:8080"
+    networks:
+      - api-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  api-network:
+    driver: bridge

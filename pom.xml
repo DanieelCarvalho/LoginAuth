@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.api</groupId>
-	<artifactId>cadastro</artifactId>
+	<artifactId>loginAuth</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>cadastro</name>
+	<name>loginAuth</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
